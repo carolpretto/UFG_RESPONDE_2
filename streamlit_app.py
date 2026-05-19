@@ -49,6 +49,10 @@ TRANSLATIONS = {
         "access_info": "Acesso à Informação",
         "high_contrast": "Alto Contraste",
         "libras": "Libras",
+        "chat_btn_open": "💬 Assistente",
+        "chat_btn_close": "✕ Fechar Chat",
+        "chat_panel_title": "Assistente UFG Responde",
+        "chat_panel_subtitle": "Olá! Como posso ajudá-lo hoje?",
     },
     "en": {
         "subtitle": "Let's put UFG's mission into practice",
@@ -87,6 +91,10 @@ TRANSLATIONS = {
         "access_info": "Access Information",
         "high_contrast": "High Contrast",
         "libras": "Libras (Sign Language)",
+        "chat_btn_open": "💬 Assistant",
+        "chat_btn_close": "✕ Close Chat",
+        "chat_panel_title": "UFG Answers Assistant",
+        "chat_panel_subtitle": "Hello! How may I assist you today?",
     },
     "es": {
         "subtitle": "Pongamos en práctica la misión de la UFG",
@@ -125,6 +133,10 @@ TRANSLATIONS = {
         "access_info": "Acceso a la Información",
         "high_contrast": "Alto Contraste",
         "libras": "Libras (Lengua de Señas)",
+        "chat_btn_open": "💬 Asistente",
+        "chat_btn_close": "✕ Cerrar Chat",
+        "chat_panel_title": "Asistente UFG Responde",
+        "chat_panel_subtitle": "¡Hola! ¿En qué puedo ayudarle hoy?",
     },
 }
 
@@ -284,6 +296,166 @@ a { color: var(--cyan-pool) !important; }
 /* Divider */
 hr {
     border-color: rgba(255,255,255,0.15) !important;
+}
+
+/* ========== CHAT FLUTUANTE ========== */
+.chat-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 99999;
+    background: linear-gradient(135deg, #00A1C9, #0A2A56);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 22px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(0,161,201,0.5);
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+}
+.chat-fab:hover {
+    background: linear-gradient(135deg, #4D9933, #0A2A56);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(77,153,51,0.5);
+}
+
+/* Painel lateral de chat */
+.chat-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0d1f3c 0%, #071428 100%);
+    border-left: 2px solid rgba(0,161,201,0.4);
+    z-index: 99998;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+    font-family: 'Inter', sans-serif;
+    animation: slideInRight 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+}
+.chat-panel-header {
+    background: linear-gradient(135deg, #00A1C9, #0A2A56);
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.chat-panel-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+}
+.chat-panel-header p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+}
+.chat-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+.chat-bubble {
+    max-width: 82%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+.chat-bubble.bot {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+.chat-bubble.user {
+    background: linear-gradient(135deg, #00A1C9, #007fa0);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    text-align: right;
+}
+.chat-bubble a {
+    color: #7FFFAA !important;
+    font-weight: 700;
+}
+.chat-timestamp {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+}
+.chat-bubble.bot .chat-timestamp { text-align: left; }
+.chat-bubble.user .chat-timestamp { text-align: right; }
+
+.chat-input-area {
+    padding: 14px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.chat-close-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.chat-close-btn:hover {
+    background: rgba(255,0,0,0.3);
+}
+/* Overlay escuro ao abrir chat */
+.chat-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 99990;
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -484,75 +656,199 @@ st.divider()
 
 
 # ==========================================
-# Chatbot Interativo
+# Chat Flutuante (Painel Lateral)
 # ==========================================
-st.markdown(f"### {t('chatbot_title')}")
-st.caption(t("chatbot_caption"))
 
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": t("chatbot_welcome")}
-    ]
+# Inicializa estado do chat — limpa mensagens a cada nova visita ao site
+if "chat_session_started" not in st.session_state:
+    st.session_state.chat_session_started = True
+    st.session_state.messages = []  # Limpo a cada nova sessão
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
 
-for i, msg in enumerate(st.session_state.messages):
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+# ---- BOTÃO FLUTUANTE (sempre visível) ----
+if not st.session_state.chat_open:
+    st.markdown(f"""
+    <form method="post" style="position:fixed; bottom:28px; right:28px; z-index:99999;">
+    </form>
+    """, unsafe_allow_html=True)
+    if st.button(t("chat_btn_open"), key="open_chat",
+                 help="Abrir o assistente virtual",
+                 type="primary"):
+        st.session_state.chat_open = True
+        st.rerun()
+    # CSS para posicionar botão como FAB
+    st.markdown("""
+    <style>
+    [data-testid="stBaseButton-primary"] {
+        position: fixed !important;
+        bottom: 28px !important;
+        right: 28px !important;
+        z-index: 99999 !important;
+        border-radius: 50px !important;
+        background: linear-gradient(135deg, #00A1C9, #0A2A56) !important;
+        padding: 14px 22px !important;
+        font-size: 15px !important;
+        box-shadow: 0 6px 24px rgba(0,161,201,0.5) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# ---- PAINEL LATERAL DE CHAT ----
+if st.session_state.chat_open:
+    import datetime
+
+    # Mensagem inicial de boas-vindas (sempre fresca)
+    if not st.session_state.messages:
+        st.session_state.messages = [{
+            "role": "assistant",
+            "content": (
+                f"Olá! Seja muito bem-vindo(a) ao **Assistente UFG Responde**. 😊\n\n"
+                f"Estou aqui para ajudá-lo(a) a encontrar projetos, pesquisadores, "
+                f"laboratórios e publicações da Universidade Federal de Goiás.\n\n"
+                f"Por favor, informe o tema ou a palavra-chave que você está buscando."
+            ) if st.session_state.lang == "pt" else (
+                "Hello! Welcome to the **UFG Answers Assistant**. 😊\n\n"
+                "I'm here to help you find projects, researchers, labs and publications from UFG.\n\n"
+                "Please share the topic or keyword you are looking for."
+            ) if st.session_state.lang == "en" else (
+                "¡Hola! Bienvenido(a) al **Asistente UFG Responde**. 😊\n\n"
+                "Estoy aquí para ayudarle a encontrar proyectos, investigadores, "
+                "laboratorios y publicaciones de la UFG.\n\n"
+                "Por favor, indíqueme el tema o la palabra clave que está buscando."
+            ),
+            "time": datetime.datetime.now().strftime("%H:%M")
+        }]
+
+    # Renderiza o painel como HTML puro (cabeçalho + bolhas)
+    header_html = f"""
+    <div class="chat-overlay" onclick=""></div>
+    <div class="chat-panel">
+        <div class="chat-panel-header">
+            <div style="display:flex;align-items:center;">
+                <div class="chat-avatar">🤖</div>
+                <div>
+                    <h3>{t('chat_panel_title')}</h3>
+                    <p>{t('chat_panel_subtitle')}</p>
+                </div>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+    """
+
+    bubbles_html = ""
+    for msg in st.session_state.messages:
+        css_class = "bot" if msg["role"] == "assistant" else "user"
+        time_str = msg.get("time", "")
+        content = msg["content"].replace("\n", "<br>")
+        # Formata link de e-mail se presente
         if "contact_email" in msg:
             mailto = f"mailto:{msg['contact_email']}"
-            st.markdown(f"""<a href="{mailto}" target="_blank" style="
-                display: inline-block;
-                background-color: #4D9933;
-                color: white !important;
-                padding: 8px 20px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: bold;
-                margin-top: 8px;
-            ">{t('send_email')}</a>""", unsafe_allow_html=True)
+            content += f'<br><br><a href="{mailto}" style="background:#4D9933;color:white!important;padding:7px 16px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">{t("send_email")}</a>'
+        bubbles_html += f"""
+        <div style="display:flex;flex-direction:column;align-items:{'flex-start' if css_class=='bot' else 'flex-end'}">
+            <div class="chat-bubble {css_class}">{content}</div>
+            <span class="chat-timestamp">{time_str}</span>
+        </div>
+        """
 
-if prompt := st.chat_input(t("chatbot_input")):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    footer_html = """
+        </div>
+    </div>
+    <script>
+        var msgs = document.getElementById('chat-messages');
+        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    </script>
+    """
 
-    prompt_words = re.findall(r'\w+', prompt.lower())
-    matched_row = None
+    st.markdown(header_html + bubbles_html + footer_html, unsafe_allow_html=True)
 
-    for idx, row in df.iterrows():
-        texto_projeto = (str(row['resumo']) + " " + str(row['titulo_projeto'])).lower()
-        if any(len(word) > 3 and word in texto_projeto for word in prompt_words):
-            matched_row = row
-            break
+    # Input e botão fechar em colunas Streamlit normais
+    col_inp, col_close = st.columns([5, 1])
+    with col_inp:
+        user_input = st.chat_input(t("chatbot_input"), key="chat_side_input")
+    with col_close:
+        if st.button(t("chat_btn_close"), key="close_chat"):
+            st.session_state.chat_open = False
+            st.rerun()
 
-    if matched_row is not None:
-        resposta = t("chatbot_found").format(
-            proj=matched_row['titulo_projeto'],
-            unit=matched_row['unidade_coordenador_projeto'],
-            coord=matched_row['nome_pesquisador'],
-            email=matched_row['email']
-        )
-
+    # Processa a mensagem do usuário
+    if user_input:
+        import datetime
+        now = datetime.datetime.now().strftime("%H:%M")
         st.session_state.messages.append({
-            "role": "assistant",
-            "content": resposta,
-            "contact_email": matched_row['email']
+            "role": "user",
+            "content": user_input,
+            "time": now
         })
 
-        with st.chat_message("assistant"):
-            st.markdown(resposta)
-            mailto = f"mailto:{matched_row['email']}"
-            st.markdown(f"""<a href="{mailto}" target="_blank" style="
-                display: inline-block;
-                background-color: #4D9933;
-                color: white !important;
-                padding: 8px 20px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: bold;
-                margin-top: 8px;
-            ">{t('send_email')}</a>""", unsafe_allow_html=True)
-    else:
-        resposta = t("chatbot_not_found")
-        st.session_state.messages.append({"role": "assistant", "content": resposta})
-        with st.chat_message("assistant"):
-            st.markdown(resposta)
+        prompt_words = re.findall(r'\w+', user_input.lower())
+        matched_row = None
+        for idx, row in df.iterrows():
+            texto = (str(row.get('resumo','')) + " " + str(row.get('titulo_projeto',''))).lower()
+            if any(len(w) > 3 and w in texto for w in prompt_words):
+                matched_row = row
+                break
+
+        if matched_row is not None:
+            if st.session_state.lang == "pt":
+                resposta = (
+                    f"Que ótimo! Encontrei uma correspondência para o tema informado. 🎉\n\n"
+                    f"📋 **Projeto:** {matched_row['titulo_projeto']}\n\n"
+                    f"📍 **Unidade:** {matched_row['unidade_coordenador_projeto']}\n\n"
+                    f"👤 **Coordenador(a):** {matched_row['nome_pesquisador']}\n\n"
+                    f"📧 **E-mail de contato:** {matched_row['email']}\n\n"
+                    f"Caso deseje entrar em contato, clique no botão abaixo. Posso ajudá-lo(a) com mais alguma informação?"
+                )
+            elif st.session_state.lang == "en":
+                resposta = (
+                    f"Great news! I found a match for the topic you provided. 🎉\n\n"
+                    f"📋 **Project:** {matched_row['titulo_projeto']}\n\n"
+                    f"📍 **Unit:** {matched_row['unidade_coordenador_projeto']}\n\n"
+                    f"👤 **Coordinator:** {matched_row['nome_pesquisador']}\n\n"
+                    f"📧 **Contact e-mail:** {matched_row['email']}\n\n"
+                    f"Please click the button below to get in touch. Is there anything else I can help you with?"
+                )
+            else:
+                resposta = (
+                    f"¡Excelente! Encontré una coincidencia para el tema indicado. 🎉\n\n"
+                    f"📋 **Proyecto:** {matched_row['titulo_projeto']}\n\n"
+                    f"📍 **Unidad:** {matched_row['unidade_coordenador_projeto']}\n\n"
+                    f"👤 **Coordinador(a):** {matched_row['nome_pesquisador']}\n\n"
+                    f"📧 **E-mail de contacto:** {matched_row['email']}\n\n"
+                    f"Si desea ponerse en contacto, haga clic en el botón. ¿Puedo ayudarle con algo más?"
+                )
+
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": resposta,
+                "contact_email": matched_row['email'],
+                "time": now
+            })
+        else:
+            if st.session_state.lang == "pt":
+                resposta = (
+                    "Peço desculpas, mas não encontrei resultados para o termo informado na nossa base de dados. 😔\n\n"
+                    "Poderia, por gentileza, tentar descrever o tema com outras palavras-chave? "
+                    "Estou à disposição para ajudá-lo(a)!"
+                )
+            elif st.session_state.lang == "en":
+                resposta = (
+                    "I apologize, but I couldn't find any results for that term in our database. 😔\n\n"
+                    "Could you please try describing the topic with different keywords? "
+                    "I'm here to help!"
+                )
+            else:
+                resposta = (
+                    "Lo siento, no encontré resultados para el término indicado en nuestra base de datos. 😔\n\n"
+                    "¿Podría intentar describir el tema con otras palabras clave? "
+                    "Estoy aquí para ayudarle."
+                )
+
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": resposta,
+                "time": now
+            })
+
+        st.rerun()
