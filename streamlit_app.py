@@ -157,16 +157,10 @@ st.markdown("""
 # ==========================================
 st.markdown("<div id='conteudo'></div>", unsafe_allow_html=True)
 
-col_logo1, col_space, col_logo2 = st.columns([1, 2, 1])
-with col_logo1:
-    # Usando imagem local baseada nos arquivos encontrados, ou placeholder se falhar
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
     try:
-        st.image("UFG.png", width=150)
-    except:
-        st.info("[Placeholder: Logo UFG]")
-with col_logo2:
-    try:
-        st.image("UFG_RESPONDE.jpeg", width=150)
+        st.image("UFG_RESPONDE.jpeg", use_container_width=True)
     except:
         st.info("[Placeholder: Logo UFG_RESPONDE]")
 
@@ -179,22 +173,47 @@ st.markdown("<h1 style='text-align: center; margin-bottom: 2rem;'>Você pergunta
 # ==========================================
 @st.cache_data
 def load_and_augment_data():
-    # Criação de conjunto de dados fictícios (mockados)
-    dados = {
-        "nome_pesquisador": ["João da Silva", "Maria Oliveira", "Carlos Santos", "Ana Souza", "Fernanda Lima"],
-        "unidade_coordenador_projeto": ["Instituto de Informática", "Escola de Agronomia", "Instituto de Química", "", "Faculdade de Medicina"],
-        "titulo_projeto": ["Inteligência Artificial na Saúde", "Manejo de Solo Sustentável", "Novos Materiais de Carbono", "Estudos Sociais", "Tratamento de Água"],
-        "resumo": ["Uso de IA para diagnósticos precisos", "Análise de solo e água para agricultura", "Materiais inovadores com base em carbono", "Impactos culturais na sociedade moderna", "Purificação de água com baixo custo"],
-        "status": ["Em Andamento", "Concluído", "Em Andamento", "Em Andamento", "Concluído"],
-        "grande_area": ["Ciências Exatas e da Terra", "Ciências Agrárias", "Ciências Exatas e da Terra", "Ciências Humanas", "Ciências da Saúde"],
-        "publicacoes": ["Artigo IEEE 2023", "Revista Agro 2022", "Nature Materials 2023", "Revista Sociedade 2021", "Health & Water 2023"]
-    }
-    df = pd.DataFrame(dados)
+    try:
+        df_pesquisa = pd.read_csv("da_projetos_pesquisa.csv", encoding="utf-8")
+    except UnicodeDecodeError:
+        df_pesquisa = pd.read_csv("da_projetos_pesquisa.csv", encoding="latin1")
+        
+    try:
+        df_extensao = pd.read_csv("da_bolsas_extensao.csv", encoding="utf-8")
+    except UnicodeDecodeError:
+        df_extensao = pd.read_csv("da_bolsas_extensao.csv", encoding="latin1")
+
+    # Padronizar colunas de Pesquisa
+    df_pesquisa = df_pesquisa.rename(columns={
+        'coordenador_projeto_pesquisa': 'nome_pesquisador',
+        'titulo_projeto_pesquisa': 'titulo_projeto',
+        'status_projeto_pesquisa': 'status'
+    })
+    
+    # Padronizar colunas de Extensão
+    df_extensao = df_extensao.rename(columns={
+        'coordenador': 'nome_pesquisador',
+        'titulo': 'titulo_projeto',
+        'situacao': 'status',
+        'unidade': 'unidade_coordenador_projeto'
+    })
+    df_extensao['grande_area'] = 'Extensão'
+    
+    # Concatenar ambas as bases
+    df = pd.concat([df_pesquisa, df_extensao], ignore_index=True)
+    
+    # Limpeza básica e criação de colunas faltantes
+    df['nome_pesquisador'] = df['nome_pesquisador'].fillna("Desconhecido")
+    df['unidade_coordenador_projeto'] = df['unidade_coordenador_projeto'].fillna("Não informada")
+    df['titulo_projeto'] = df['titulo_projeto'].fillna("Sem Título")
+    df['status'] = df['status'].fillna("Não informado")
+    df['grande_area'] = df['grande_area'].fillna("Não informada")
+    df['resumo'] = df['titulo_projeto']  # Planilhas não possuem resumo explícito
+    df['publicacoes'] = "Registros pendentes"
     
     # Geração Automática de E-mail
     def generate_email(nome):
-        # Letras minúsculas, sem espaços ou acentos
-        nfkd_form = unicodedata.normalize('NFKD', nome)
+        nfkd_form = unicodedata.normalize('NFKD', str(nome))
         clean_name = u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
         clean_name = clean_name.lower().replace(" ", "_")
         return f"{clean_name}@ufg.br"
@@ -203,13 +222,12 @@ def load_and_augment_data():
     
     # Mapeamento de Laboratório Físico
     lab_map = {
-        "Instituto de Informática": "Laboratório de Inteligência Artificial",
-        "Escola de Agronomia": "Laboratório de Análise de Solos",
-        "Instituto de Química": "Laboratório de Química de Materiais",
-        "Faculdade de Medicina": "Laboratório de Saúde Pública"
+        "INSTITUTO DE INFORMÁTICA": "Laboratório de Inteligência Artificial",
+        "ESCOLA DE AGRONOMIA": "Laboratório de Análise de Solos",
+        "INSTITUTO DE QUÍMICA": "Laboratório de Química de Materiais",
+        "FACULDADE DE MEDICINA": "Laboratório de Saúde Pública"
     }
-    # Caso campo esteja vazio ou não mapeado, atribui lab padrão
-    df['laboratorio'] = df['unidade_coordenador_projeto'].map(lab_map).fillna("Laboratório Central Padrão")
+    df['laboratorio'] = df['unidade_coordenador_projeto'].str.upper().map(lab_map).fillna("Laboratório Central Padrão")
     
     return df
 
@@ -220,44 +238,45 @@ df = load_and_augment_data()
 # Tarefa 5: Mecanismo de Busca e Filtros
 # ==========================================
 st.markdown("<div id='busca'></div>", unsafe_allow_html=True)
-st.markdown("### Busca de Projetos e Pesquisadores")
 
 search_query = st.text_input("🔍 Digite uma palavra-chave (ex: água, solo, carbono, saúde)")
 
-col_f1, col_f2, col_f3 = st.columns(3)
-with col_f1:
-    f_area = st.selectbox("Grande Área", options=["Todas"] + list(df['grande_area'].unique()))
-with col_f2:
-    f_status = st.selectbox("Status do Projeto", options=["Todos"] + list(df['status'].unique()))
-with col_f3:
-    f_unidade = st.selectbox("Unidade", options=["Todas"] + list(df['unidade_coordenador_projeto'].unique()))
-
-# Lógica de Filtragem
-filtered_df = df.copy()
-
 if search_query:
+    st.markdown("### Refine sua Busca")
+    col_f1, col_f2, col_f3 = st.columns(3)
+    with col_f1:
+        f_area = st.selectbox("Grande Área", options=["Todas"] + list(df['grande_area'].unique()))
+    with col_f2:
+        f_status = st.selectbox("Status do Projeto", options=["Todos"] + list(df['status'].unique()))
+    with col_f3:
+        f_unidade = st.selectbox("Unidade", options=["Todas"] + list(df['unidade_coordenador_projeto'].unique()))
+    
+    # Lógica de Filtragem
+    filtered_df = df.copy()
+    
     # Busca global simples convertendo a linha para string e ignorando case
     mask = filtered_df.apply(lambda row: row.astype(str).str.contains(search_query, case=False).any(), axis=1)
     filtered_df = filtered_df[mask]
-
-if f_area != "Todas":
-    filtered_df = filtered_df[filtered_df['grande_area'] == f_area]
-if f_status != "Todos":
-    filtered_df = filtered_df[filtered_df['status'] == f_status]
-if f_unidade != "Todas":
-    filtered_df = filtered_df[filtered_df['unidade_coordenador_projeto'] == f_unidade]
-
-st.markdown("#### Resultados")
-tab1, tab2, tab3, tab4 = st.tabs(["👤 Pesquisador", "📄 Projeto", "🔬 Laboratório", "📚 Publicações"])
-
-with tab1:
-    st.dataframe(filtered_df[['nome_pesquisador', 'email']], use_container_width=True, hide_index=True)
-with tab2:
-    st.dataframe(filtered_df[['titulo_projeto', 'resumo', 'status']], use_container_width=True, hide_index=True)
-with tab3:
-    st.dataframe(filtered_df[['unidade_coordenador_projeto', 'laboratorio']], use_container_width=True, hide_index=True)
-with tab4:
-    st.dataframe(filtered_df[['titulo_projeto', 'publicacoes']], use_container_width=True, hide_index=True)
+    
+    if f_area != "Todas":
+        filtered_df = filtered_df[filtered_df['grande_area'] == f_area]
+    if f_status != "Todos":
+        filtered_df = filtered_df[filtered_df['status'] == f_status]
+    if f_unidade != "Todas":
+        filtered_df = filtered_df[filtered_df['unidade_coordenador_projeto'] == f_unidade]
+    
+    st.markdown("#### O que você deseja visualizar?")
+    tipo_busca = st.radio("Selecione:", ["Pesquisador", "Projeto", "Laboratório", "Publicações"], horizontal=True, label_visibility="collapsed")
+    
+    st.markdown("#### Resultados")
+    if tipo_busca == "Pesquisador":
+        st.dataframe(filtered_df[['nome_pesquisador', 'email']], use_container_width=True, hide_index=True)
+    elif tipo_busca == "Projeto":
+        st.dataframe(filtered_df[['titulo_projeto', 'resumo', 'status']], use_container_width=True, hide_index=True)
+    elif tipo_busca == "Laboratório":
+        st.dataframe(filtered_df[['unidade_coordenador_projeto', 'laboratorio']], use_container_width=True, hide_index=True)
+    elif tipo_busca == "Publicações":
+        st.dataframe(filtered_df[['titulo_projeto', 'publicacoes']], use_container_width=True, hide_index=True)
 
 st.divider()
 
