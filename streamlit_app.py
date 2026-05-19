@@ -141,8 +141,9 @@ a { color: var(--cyan-pool) !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Inserindo Barra de Acessibilidade
+# Inserindo Barra de Acessibilidade e FontAwesome
 st.markdown("""
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <div class="gov-accessibility-bar">
     <div class="gov-links">
         <a href="#conteudo">Ir para o conteúdo [1]</a>
@@ -150,11 +151,16 @@ st.markdown("""
         <a href="#busca">Ir para busca [3]</a>
     </div>
     <div class="gov-controls">
-        <span class="info-icon" title="Acesso à Informação">i</span>
-        <span><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg" width="16" style="margin-right:4px;"> Português (Brasil) ∨</span>
-        <span class="gov-controls-btn">A+</span>
-        <span class="gov-controls-btn">A-</span>
-        <span class="contrast-icon" title="Alto Contraste"></span>
+        <span class="gov-controls-btn" title="Acesso à Informação"><i class="fa-solid fa-circle-info" style="color: #FFD700; font-size: 14px; margin-right: 4px;"></i> Acesso à Informação</span>
+        <select class="gov-lang-select" style="background: transparent; border: none; font-weight: bold; color: #333; cursor: pointer; padding: 0 5px; outline: none;">
+            <option value="pt">🇧🇷 Português</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="es">🇪🇸 Español</option>
+        </select>
+        <span class="gov-controls-btn" title="Aumentar Fonte">A+</span>
+        <span class="gov-controls-btn" title="Diminuir Fonte">A-</span>
+        <span class="gov-controls-btn" title="Alto Contraste"><i class="fa-solid fa-circle-half-stroke" style="margin-right: 4px;"></i> Alto Contraste</span>
+        <span class="gov-controls-btn" title="Libras"><i class="fa-solid fa-hands-asl-interpreting" style="color: #005A9C; margin-right: 4px;"></i> Libras</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -179,6 +185,9 @@ st.markdown("""
 # ==========================================
 st.markdown("<div id='conteudo'></div>", unsafe_allow_html=True)
 
+st.markdown("<h4 style='text-align: center; margin-top: 1rem;'>Vamos colocar em prática a missão da UFG</h4>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; margin-bottom: 2rem;'>Você pergunta, UFG RESPONDE</h1>", unsafe_allow_html=True)
+
 # Ajuste da Logo para um tamanho mais proporcional (usando colunas mais largas nas bordas)
 col1, col2, col3 = st.columns([1.5, 1, 1.5])
 with col2:
@@ -186,9 +195,6 @@ with col2:
         st.image("UFG_RESPONDE.jpeg", use_container_width=True)
     except:
         st.info("[Placeholder: Logo UFG_RESPONDE]")
-
-st.markdown("<h4 style='text-align: center;'>Vamos colocar em prática a missão da UFG</h4>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; margin-bottom: 2rem;'>Você pergunta, UFG RESPONDE</h1>", unsafe_allow_html=True)
 
 
 # ==========================================
