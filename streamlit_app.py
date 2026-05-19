@@ -19,19 +19,41 @@ st.markdown("""
 }
 
 .stApp {
-    background-color: var(--bg-light);
+    background-color: var(--primary-navy);
+    background-image: linear-gradient(180deg, var(--primary-navy) 0%, #051630 100%);
 }
 
-/* Headers e Textos */
-h1, h2, h3 { color: var(--primary-navy) !important; font-family: sans-serif; }
-h4, h5, h6 { color: var(--vibrant-green) !important; font-family: sans-serif; }
+/* Headers e Textos em Branco para contrastar com fundo azul */
+h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { 
+    color: white !important; 
+    font-family: sans-serif; 
+}
 a { color: var(--cyan-pool) !important; }
+
+/* Melhorando visibilidade dos Inputs no fundo escuro */
+.stTextInput > div > div > input, [data-baseweb="select"] {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: black !important;
+    border-radius: 8px;
+}
+
+/* Estilo Bolhas de Chat (Conversa) */
+[data-testid="stChatMessage"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
 
 /* Botões Principais */
 .stButton > button {
-    background-color: var(--primary-navy);
+    background-color: var(--cyan-pool);
     color: white;
     border: none;
+    border-radius: 8px;
+    font-weight: bold;
 }
 .stButton > button:hover {
     background-color: var(--vibrant-green);
@@ -157,7 +179,8 @@ st.markdown("""
 # ==========================================
 st.markdown("<div id='conteudo'></div>", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([1, 2, 1])
+# Ajuste da Logo para um tamanho mais proporcional (usando colunas mais largas nas bordas)
+col1, col2, col3 = st.columns([1.5, 1, 1.5])
 with col2:
     try:
         st.image("UFG_RESPONDE.jpeg", use_container_width=True)
