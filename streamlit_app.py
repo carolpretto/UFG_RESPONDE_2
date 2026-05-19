@@ -128,11 +128,9 @@ TRANSLATIONS = {
     },
 }
 
-# Inicializar idioma e contraste
+# Inicializar idioma
 if "lang" not in st.session_state:
     st.session_state.lang = "pt"
-if "high_contrast" not in st.session_state:
-    st.session_state.high_contrast = False
 
 def t(key):
     """Retorna o texto traduzido para o idioma atual."""
@@ -142,126 +140,180 @@ def t(key):
 # ==========================================
 # CSS Global
 # ==========================================
-# CSS condicional baseado no modo de contraste
-if st.session_state.high_contrast:
-    bg_css = "background-color: #000000; background-image: none;"
-    text_css = "color: #FFFF00 !important;"
-    input_bg = "background-color: #000 !important; color: #FFFF00 !important; border: 2px solid #FFFF00 !important;"
-    chat_bg = "background-color: #111; border: 2px solid #FFFF00;"
-    btn_bg = "background-color: #FFFF00; color: black;"
-    btn_hover = "background-color: #FFF; color: black;"
-    radio_bg = "background: #111; border: 2px solid #FFFF00;"
-    radio_hover = "background: #333;"
-    bar_bg = "background-color: #000;"
-    link_color = "#00FFFF"
-    divider_color = "#FFFF00"
-else:
-    bg_css = "background-color: #0A2A56; background-image: linear-gradient(180deg, #0A2A56 0%, #051630 100%);"
-    text_css = "color: white !important;"
-    input_bg = "background-color: rgba(255, 255, 255, 0.95) !important; color: black !important;"
-    chat_bg = "background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);"
-    btn_bg = "background-color: #00A1C9; color: white;"
-    btn_hover = "background-color: #4D9933; color: white;"
-    radio_bg = "background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);"
-    radio_hover = "background: rgba(0,161,201,0.3);"
-    bar_bg = "background-color: #222;"
-    link_color = "#00A1C9"
-    divider_color = "rgba(255,255,255,0.15)"
-
-st.markdown(f"""
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-.stApp {{
-    {bg_css}
+:root {
+    --primary-navy: #0A2A56;
+    --vibrant-green: #4D9933;
+    --cyan-pool: #00A1C9;
+    --bg-light: #F8F9FA;
+}
+
+.stApp {
+    background-color: var(--primary-navy);
+    background-image: linear-gradient(180deg, var(--primary-navy) 0%, #051630 100%);
     font-family: 'Inter', sans-serif;
-}}
+}
 
-h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {{
-    {text_css}
+/* Textos em branco */
+h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {
+    color: white !important;
     font-family: 'Inter', sans-serif;
-}}
-a {{ color: {link_color} !important; }}
+}
+a { color: var(--cyan-pool) !important; }
 
-.stTextInput > div > div > input, [data-baseweb="select"] {{
-    {input_bg}
+/* Inputs */
+.stTextInput > div > div > input, [data-baseweb="select"] {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: black !important;
     border-radius: 10px;
-}}
+}
 
-[data-testid="stChatMessage"] {{
-    {chat_bg}
+/* Bolhas de Chat */
+[data-testid="stChatMessage"] {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
     padding: 18px;
     margin-bottom: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     backdrop-filter: blur(8px);
-}}
+}
 
-[data-testid="stChatInput"] textarea {{
-    {input_bg}
+/* Chat input */
+[data-testid="stChatInput"] textarea {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: black !important;
     border-radius: 10px;
-}}
+}
 
-.stButton > button {{
-    {btn_bg}
+/* Botões Principais */
+.stButton > button {
+    background-color: var(--cyan-pool);
+    color: white;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     transition: all 0.3s ease;
-}}
-.stButton > button:hover {{
-    {btn_hover}
+}
+.stButton > button:hover {
+    background-color: var(--vibrant-green);
+    color: white;
     border: none;
     transform: translateY(-1px);
-}}
+    box-shadow: 0 4px 12px rgba(77,153,51,0.4);
+}
 
-.block-container {{
-    padding-top: 1rem !important;
-}}
+/* Barra de Acessibilidade */
+.gov-accessibility-bar {
+    background-color: #222;
+    padding: 6px 4%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    border-bottom: 2px solid var(--cyan-pool);
+    font-family: 'Inter', Arial, sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999999;
+}
+.gov-links a {
+    margin-right: 15px;
+    color: #ccc !important;
+    text-decoration: none;
+    font-size: 11px;
+}
+.gov-links a:hover {
+    text-decoration: underline;
+    color: white !important;
+}
+.gov-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.gov-controls span, .gov-controls div {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.gov-controls-btn {
+    background: #444;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #eee;
+    font-size: 11px;
+    transition: background 0.2s;
+}
+.gov-controls-btn:hover {
+    background: #666;
+}
 
-[data-testid="stDataFrame"] {{
+/* Espaçamento para não ficar sob a barra fixa */
+.block-container {
+    padding-top: 3.5rem !important;
+}
+
+/* Tabela / Dataframe */
+[data-testid="stDataFrame"] {
     border-radius: 10px;
     overflow: hidden;
-}}
+}
 
-[data-testid="stRadio"] > div {{
+/* Radio buttons */
+[data-testid="stRadio"] > div {
     gap: 0.5rem;
-}}
-[data-testid="stRadio"] label {{
-    {radio_bg}
+}
+[data-testid="stRadio"] label {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 8px;
     padding: 6px 14px !important;
     transition: all 0.2s;
-}}
-[data-testid="stRadio"] label:hover {{
-    {radio_hover}
-}}
+}
+[data-testid="stRadio"] label:hover {
+    background: rgba(0,161,201,0.3);
+}
 
-hr {{
-    border-color: {divider_color} !important;
-}}
+/* Divider */
+hr {
+    border-color: rgba(255,255,255,0.15) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 
 # ==========================================
-# Barra de Acessibilidade FUNCIONAL (tudo junto)
+# Barra de Acessibilidade com troca real de idioma
 # ==========================================
-st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">', unsafe_allow_html=True)
+st.markdown(f"""
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<div class="gov-accessibility-bar">
+    <div class="gov-links">
+        <a href="#conteudo">{t('skip_content')}</a>
+        <a href="#menu">{t('skip_menu')}</a>
+        <a href="#busca">{t('skip_search')}</a>
+    </div>
+    <div class="gov-controls">
+        <span class="gov-controls-btn"><i class="fa-solid fa-circle-info" style="color: #FFD700; margin-right: 4px;"></i> {t('access_info')}</span>
+        <span class="gov-controls-btn" title="A+">A+</span>
+        <span class="gov-controls-btn" title="A-">A-</span>
+        <span class="gov-controls-btn"><i class="fa-solid fa-circle-half-stroke" style="margin-right: 4px;"></i> {t('high_contrast')}</span>
+        <span class="gov-controls-btn"><i class="fa-solid fa-hands-asl-interpreting" style="color: #00A1C9; margin-right: 4px;"></i> {t('libras')}</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-col_skip, col_info, col_lang, col_contrast, col_libras = st.columns([3, 1.5, 1.2, 1.2, 0.8])
-
-with col_skip:
-    st.markdown(f"<small><a href='#conteudo' style='margin-right:10px;'>{t('skip_content')}</a> "
-                f"<a href='#menu' style='margin-right:10px;'>{t('skip_menu')}</a> "
-                f"<a href='#busca'>{t('skip_search')}</a></small>", unsafe_allow_html=True)
-
-with col_info:
-    st.link_button(f"ℹ️ {t('access_info')}", "https://www.gov.br/acessoainformacao", use_container_width=True)
-
+# Seletor de idioma FUNCIONAL via Streamlit (troca real de idioma)
+lang_labels = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
+col_lang_spacer, col_lang = st.columns([4, 1])
 with col_lang:
-    lang_labels = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
     selected_lang = st.selectbox(
         "🌐",
         options=["pt", "en", "es"],
@@ -273,15 +325,6 @@ with col_lang:
     if selected_lang != st.session_state.lang:
         st.session_state.lang = selected_lang
         st.rerun()
-
-with col_contrast:
-    contrast_label = "◑ " + t('high_contrast')
-    if st.button(contrast_label, key="btn_contrast", use_container_width=True):
-        st.session_state.high_contrast = not st.session_state.high_contrast
-        st.rerun()
-
-with col_libras:
-    st.link_button(f"🤟 {t('libras')}", "https://www.gov.br/governodigital/vlibras", use_container_width=True)
 
 # Widget VLibras
 st.markdown("""
